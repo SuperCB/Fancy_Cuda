@@ -103,22 +103,49 @@ if bare_metal_version >= Version("11.8"):
     cc_flag.append("-gencode")
     cc_flag.append("arch=compute_90,code=sm_90")
 
+# ext_modules.append(
+#     CUDAExtension(
+#         'vllm_sort', [
+#             './torch_radix_sort/vllm_sort.cpp',
+#             './torch_radix_sort/radix_sort.cu',
+#             './torch_radix_sort/scan.cu',
+#             './torch_radix_sort/utils.cpp',
+#         ],
+#         extra_compile_args={'cxx': ['-g', "-std=c++17" ],
+#                             'nvcc': append_nvcc_threads([
+#                                 '-O2',  "-std=c++17"
+#                             ] + cc_flag)
+#                            }
+#     )
+# )
+# ext_modules.append(
+#     CUDAExtension(
+#         'vllm_sort', [
+#             './cub_seg_sort/segment_sort.cu',
+#             './cub_seg_sort/vllm_sort.cpp',
+#         ],
+#         extra_compile_args={'cxx': ['-g', "-std=c++17" ],
+#                             'nvcc': append_nvcc_threads([
+#                                 '-O2',  "-std=c++17"
+#                             ] + cc_flag)
+#                            }
+#     )
+# )
 ext_modules.append(
     CUDAExtension(
-        'vllm_sort', [
-            './torch_radix_sort/vllm_sort.cpp',
-            './torch_radix_sort/radix_sort.cu',
+        'vllm_topk', [
+            './topk/vllm_topk.cpp',
+            './topk/sampling_topk_kernels.cu',
         ],
-        extra_compile_args={'cxx': ['-g', '-march=native', '-funroll-loops'],
+        extra_compile_args={'cxx': ['-g', "-std=c++17" ],
                             'nvcc': append_nvcc_threads([
-                                '-O3', '--use_fast_math', '--expt-extended-lambda'
+                                '-O2',  "-std=c++17"
                             ] + cc_flag)
                            }
     )
 )
-
 setup(
-    name="vllm_sort",
+    name="vllm_topk",
     version="0.1",
     ext_modules=ext_modules,
     cmdclass={"build_ext": BuildExtension} if ext_modules else {},
